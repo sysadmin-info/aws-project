@@ -1,0 +1,74 @@
+---
+- name: Launch EC2 Instances
+  hosts: localhost
+  vars_files:
+    - ../vars/creds.yml
+  tasks:
+    - name: Launch EC2 Instances
+      ec2_instance:
+        key_name: "aws-ansible-key"
+        instance_type: "t2.micro"
+        image_id: "ami-0715d656023fe21b4" 
+        count: 2
+        region: "{{ region }}"
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        tags:
+          Name: "Ansible-Deployed-Instance"
+      register: ec2
+
+    - name: Wait for EC2 Instances to be Running
+      ec2_instance_info:
+        region: "{{ region }}"
+        instance_ids: "{{ ec2.instance_ids }}"
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+      register: ec2_info
+      until: ec2_info.instances | selectattr('state.name', 'equalto', 'running') | list | length == 2
+      retries: 30
+      delay: 20
+
+    - name: Wait for SSH to be available on Database Server
+      wait_for:
+        host: "{{ ec2_info.instances[0].public_ip_address }}"
+        port: 22
+        delay: 10
+        timeout: 900
+        state: started
+
+    - name: Wait for SSH to be available on Web Server
+      wait_for:
+        host: "{{ ec2_info.instances[1].public_ip_address }}"
+        port: 22
+        delay: 10
+        timeout: 900
+        state: started
+
+    - name: Add EC2 Instance for Database Server to Inventory
+      add_host:
+        hostname: "{{ ec2_info.instances[0].public_ip_address }}"
+        groups: db_server
+        ansible_user: admin 
+        ansible_ssh_private_key_file: ~/.ssh/aws-ansible-key.pem
+        ansible_python_interpreter: /usr/bin/python3
+
+    - name: Add EC2 Instance for Web Server to Inventory
+      add_host:
+        hostname: "{{ ec2_info.instances[1].public_ip_address }}"
+        groups: web_server
+        ansible_user: admin 
+        ansible_ssh_private_key_file: ~/.ssh/aws-ansible-key.pem
+        ansible_python_interpreter: /usr/bin/python3
+
+- name: Configure MySQL Database Server
+  hosts: db_server
+  become: yes
+  roles:
+    - db_server
+
+- name: Configure Flask Web Server
+  hosts: web_server
+  become: yes
+  roles:
+    - web_server
+
