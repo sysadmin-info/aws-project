@@ -73,7 +73,7 @@
   tags: environment_variables
 
 - name: Reload environment variables
-  command: source /etc/environment
+  shell: ". /etc/environment"
   become: yes
   tags: environment_variables
 
