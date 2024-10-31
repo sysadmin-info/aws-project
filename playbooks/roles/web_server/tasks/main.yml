@@ -59,12 +59,18 @@
       MYSQL_DATABASE_USER={{ db_user }}
       MYSQL_DATABASE_PASSWORD={{ db_password }}
       MYSQL_DATABASE_DB={{ db_name }}
-  owner: root
-  group: root
-  mode: '0644'
   become: yes
   tags: environment_variables
   notify: Restart Gunicorn
+
+- name: Set permissions for /etc/environment
+  file:
+    path: /etc/environment
+    owner: root
+    group: root
+    mode: '0644'
+  become: yes
+  tags: environment_variables
 
 - name: Reload environment variables
   command: source /etc/environment
