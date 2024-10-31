@@ -5,11 +5,11 @@ from mysql.connector import Error
 
 app = Flask(__name__)
 
-# MySQL configurations from environment variables or defaults
-mysql_database_host = os.getenv('MYSQL_DATABASE_HOST', '10.10.0.115')
-mysql_database_user = os.getenv('MYSQL_DATABASE_USER', 'db_user')
-mysql_database_password = os.getenv('MYSQL_DATABASE_PASSWORD', 'Passw0rd')
-mysql_database_db = os.getenv('MYSQL_DATABASE_DB', 'employee_db')
+# MySQL configurations fetched from environment variables
+mysql_database_host = os.getenv('MYSQL_DATABASE_HOST')
+mysql_database_user = os.getenv('MYSQL_DATABASE_USER')
+mysql_database_password = os.getenv('MYSQL_DATABASE_PASSWORD')
+mysql_database_db = os.getenv('MYSQL_DATABASE_DB')
 
 print(f"Configured MySQL with Host: {mysql_database_host}, User: {mysql_database_user}, Database: {mysql_database_db}")
 

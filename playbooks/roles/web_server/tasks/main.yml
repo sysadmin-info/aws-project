@@ -51,6 +51,26 @@
   command: "/opt/gunicorn_app/venv/bin/pip install Flask gunicorn mysql-connector-python flask-mysqldb"
   tags: dependencies
 
+- name: Set environment variables for Flask app
+  copy:
+    dest: /etc/environment
+    content: |
+      MYSQL_DATABASE_HOST={{ db_server_ip }}
+      MYSQL_DATABASE_USER={{ db_user }}
+      MYSQL_DATABASE_PASSWORD={{ db_password }}
+      MYSQL_DATABASE_DB={{ db_name }}
+  owner: root
+  group: root
+  mode: '0644'
+  become: yes
+  tags: environment_variables
+  notify: Restart Gunicorn
+
+- name: Reload environment variables
+  command: source /etc/environment
+  become: yes
+  tags: environment_variables
+
 # Gunicorn Service Setup
 - name: Create Gunicorn systemd service file
   copy:
@@ -81,8 +101,7 @@
     state: started
   tags: gunicorn_service
 
-
-    # Nginx Setup for Reverse Proxy
+# Nginx Setup for Reverse Proxy
 - name: Create Nginx configuration for Flask app
   copy:
     dest: /etc/nginx/sites-available/flask_app
@@ -116,4 +135,5 @@
   service:
     name: nginx
     state: restarted
-  tags: nginx    
+  tags: nginx
+
