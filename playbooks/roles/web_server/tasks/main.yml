@@ -95,6 +95,7 @@
       [Install]
       WantedBy=multi-user.target
   tags: gunicorn_service
+  notify: Restart Gunicorn
 
 - name: Reload systemd daemon to recognize new Gunicorn service
   command: systemctl daemon-reload
@@ -125,6 +126,7 @@
           }
       }
   tags: nginx
+  notify: Restart Nginx
 
 - name: Enable Nginx configuration
   file:
