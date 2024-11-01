@@ -28,12 +28,7 @@
       retries: 30
       delay: 20
 
-    # Debug task to check the contents of ec2_info
-    - name: Debug ec2_info
-      debug:
-        var: ec2_info
-
-    # Set global fact for db_server_ip
+    # Set global fact for db_server_ip using the correct list notation
     - name: Set global fact for db_server_ip
       set_fact:
         db_server_ip: "{{ ec2_info.instances[0].private_ip_address }}"
@@ -80,7 +75,7 @@
   hosts: web_server
   become: yes
   vars:
-    db_server_ip: "{{ db_server_ip }}"
+    db_server_ip: "{{ db_server_ip }}"  # Use the global fact set earlier
   roles:
     - web_server
 
