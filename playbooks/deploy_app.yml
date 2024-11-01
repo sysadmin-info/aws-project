@@ -70,7 +70,7 @@
   hosts: web_server
   become: yes
   vars:
-    db_server_ip: "{{ ec2_info.instances[0].private_ip_address }}"  # Pass the internal IP address explicitly
+    db_server_ip: "{{ ec2_info.instances[0].private_ip_address }}"  # Pass the private IP of the database server
   roles:
     - web_server
 
