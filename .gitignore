@@ -1,2 +1,2 @@
 vars/creds.yml
-roles/*/vars/main.yml
+playbooks/roles/*/vars/main.yml
