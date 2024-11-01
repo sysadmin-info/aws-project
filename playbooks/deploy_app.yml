@@ -8,7 +8,7 @@
       ec2_instance:
         key_name: "aws-ansible-key"
         instance_type: "t2.micro"
-        image_id: "ami-0715d656023fe21b4" 
+        image_id: "ami-0715d656023fe21b4"
         count: 2
         region: "{{ region }}"
         aws_access_key: "{{ aws_access_key }}"
@@ -28,10 +28,16 @@
       retries: 30
       delay: 20
 
+    # Debug task to check the contents of ec2_info
+    - name: Debug ec2_info
+      debug:
+        var: ec2_info
+
     # Set global fact for db_server_ip using the correct list notation
     - name: Set global fact for db_server_ip
       set_fact:
         db_server_ip: "{{ ec2_info.instances[0].private_ip_address }}"
+      run_once: true
 
     - name: Wait for SSH to be available on Database Server
       wait_for:
@@ -53,7 +59,7 @@
       add_host:
         hostname: "{{ ec2_info.instances[0].public_ip_address }}"
         groups: db_server
-        ansible_user: admin 
+        ansible_user: admin
         ansible_ssh_private_key_file: ~/.ssh/aws-ansible-key.pem
         ansible_python_interpreter: /usr/bin/python3
 
@@ -61,7 +67,7 @@
       add_host:
         hostname: "{{ ec2_info.instances[1].public_ip_address }}"
         groups: web_server
-        ansible_user: admin 
+        ansible_user: admin
         ansible_ssh_private_key_file: ~/.ssh/aws-ansible-key.pem
         ansible_python_interpreter: /usr/bin/python3
 
@@ -75,7 +81,7 @@
   hosts: web_server
   become: yes
   vars:
-    db_server_ip: "{{ db_server_ip }}"  # Use the global fact set earlier
+    db_server_ip: "{{ hostvars['localhost']['db_server_ip'] }}"  # Use the value set in localhost's scope
   roles:
     - web_server
 
