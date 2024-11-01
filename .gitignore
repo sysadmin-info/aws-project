@@ -1,1 +1,2 @@
-**/vars/*
+vars/creds.yml
+roles/*/vars/main.yml
