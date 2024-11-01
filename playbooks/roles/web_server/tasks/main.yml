@@ -55,7 +55,7 @@
   copy:
     dest: /etc/environment
     content: |
-      MYSQL_DATABASE_HOST={{ db_server_ip }}  # Uses the internal IP address passed from deploy_app.yml
+      MYSQL_DATABASE_HOST={{ db_server_ip }}
       MYSQL_DATABASE_USER={{ db_user }}
       MYSQL_DATABASE_PASSWORD={{ db_password }}
       MYSQL_DATABASE_DB={{ db_name }}
