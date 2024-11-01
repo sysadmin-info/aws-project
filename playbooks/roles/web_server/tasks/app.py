@@ -56,4 +56,3 @@ def read():
 
     except Error as e:
         return f"Failed to query database: {e}", 500
-
