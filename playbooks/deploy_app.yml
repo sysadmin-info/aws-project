@@ -28,6 +28,11 @@
       retries: 30
       delay: 20
 
+    # Add the debug task here to check the contents of ec2_info
+    - name: Debug ec2_info
+      debug:
+        var: ec2_info
+
     - name: Wait for SSH to be available on Database Server
       wait_for:
         host: "{{ ec2_info.instances[0].public_ip_address }}"
