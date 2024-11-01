@@ -69,6 +69,8 @@
 - name: Configure Flask Web Server
   hosts: web_server
   become: yes
+  vars:
+    db_server_ip: "{{ ec2_info.instances[0].private_ip_address }}"  # Pass the internal IP address
   roles:
     - web_server
 
