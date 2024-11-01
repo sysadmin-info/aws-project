@@ -29,10 +29,6 @@
   set_fact:
     ansible_python_interpreter: /opt/python-venv/bin/python
 
-- name: Debug db_server_ip
-  debug:
-    var: db_server_ip
-
 - name: Create application directory
   file:
     path: "/opt/gunicorn_app"
