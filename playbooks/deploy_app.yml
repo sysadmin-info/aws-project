@@ -60,6 +60,10 @@
         ansible_ssh_private_key_file: ~/.ssh/aws-ansible-key.pem
         ansible_python_interpreter: /usr/bin/python3
 
+    - name: Set internal IP of Database Server as a fact
+      set_fact:
+        db_server_ip: "{{ ec2_info.instances[0].private_ip_address }}"          
+
 - name: Configure MySQL Database Server
   hosts: db_server
   become: yes
@@ -70,4 +74,6 @@
   hosts: web_server
   become: yes
   roles:
-    - web_server
+    - role: web_server
+      vars:
+        db_server_ip: "{{ db_server_ip }}"
