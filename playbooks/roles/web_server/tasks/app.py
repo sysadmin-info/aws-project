@@ -29,6 +29,10 @@ def get_db_connection():
 def main():
     return "Welcome to the Employee Database API!"
 
+@app.route('/how_are_you')
+def hello():
+    return 'I am good, how about you?'
+
 @app.route('/read_from_database')
 def read():
     conn = get_db_connection()
