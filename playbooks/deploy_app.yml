@@ -30,7 +30,7 @@
 
     - name: Wait for SSH to be available on Database Server
       wait_for:
-        host: "{{ ec2_info.instances[0].public_ip_address }}"
+        host: "{{ ec2_info.instances[0].private_ip_address }}"
         port: 22
         delay: 10
         timeout: 900
@@ -38,7 +38,7 @@
 
     - name: Wait for SSH to be available on Web Server
       wait_for:
-        host: "{{ ec2_info.instances[1].public_ip_address }}"
+        host: "{{ ec2_info.instances[1].private_ip_address }}"
         port: 22
         delay: 10
         timeout: 900
@@ -46,7 +46,7 @@
 
     - name: Add EC2 Instance for Database Server to Inventory
       add_host:
-        hostname: "{{ ec2_info.instances[0].public_ip_address }}"
+        hostname: "{{ ec2_info.instances[0].private_ip_address }}"
         groups: db_server
         ansible_user: admin 
         ansible_ssh_private_key_file: ~/.ssh/aws-ansible-key.pem
@@ -54,7 +54,7 @@
 
     - name: Add EC2 Instance for Web Server to Inventory
       add_host:
-        hostname: "{{ ec2_info.instances[1].public_ip_address }}"
+        hostname: "{{ ec2_info.instances[1].private_ip_address }}"
         groups: web_server
         ansible_user: admin 
         ansible_ssh_private_key_file: ~/.ssh/aws-ansible-key.pem
@@ -71,4 +71,3 @@
   become: yes
   roles:
     - web_server
-

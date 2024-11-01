@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, request, jsonify
 import mysql.connector
 from mysql.connector import Error
 
@@ -27,7 +27,7 @@ def get_db_connection():
             print("Connection to MySQL successful")
         return conn
     except Error as e:
-        print(f"Error: Could not connect to MySQL at {mysql_database_host} as {mysql_database_user}. Error: {e}")
+        print(f"Error: Could not connect to MySQL at {mysql_database_host}. Error: {e}")
         return None
 
 @app.route("/")
@@ -38,14 +38,14 @@ def main():
 def hello():
     return 'I am good, how about you?'
 
-@app.route('/read_from_database')
+@app.route('/read_from_database', methods=['GET'])
 def read():
     print("Processing request: /read_from_database")
     conn = get_db_connection()
 
     if conn is None:
         print("Failed to establish a connection with the database")
-        return 'Failed to connect to the database', 500
+        return jsonify({"error": "Failed to connect to the database"}), 500
 
     try:
         cursor = conn.cursor()
@@ -55,16 +55,47 @@ def read():
 
         if not rows:
             print("Query result: No employees found")
-            result = "No employees found"
+            result = {"message": "No employees found"}
         else:
             print(f"Query result: {len(rows)} employees found")
-            result = ",".join([row[0] for row in rows])
+            result = {"employees": [row[0] for row in rows]}
 
         cursor.close()
         conn.close()
         print("Connection closed after query")
-        return result
+        return jsonify(result)
 
     except Error as e:
         print(f"Database query failed: {e}")
-        return f"Failed to query database: {e}", 500
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/add_employee', methods=['POST'])
+def add_employee():
+    data = request.get_json()
+    name = data.get('name')
+    position = data.get('position')
+    salary = data.get('salary')
+
+    if not name or not position or not salary:
+        print("Invalid input data")
+        return jsonify({"error": "Invalid input"}), 400
+
+    conn = get_db_connection()
+
+    if conn is None:
+        return jsonify({"error": "Failed to connect to the database"}), 500
+
+    try:
+        cursor = conn.cursor(prepared=True)
+        query = "INSERT INTO employees (name, position, salary) VALUES (%s, %s, %s)"
+        cursor.execute(query, (name, position, salary))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+        print("Employee added successfully")
+        return jsonify({"message": "Employee added successfully"})
+
+    except Error as e:
+        print(f"Failed to add employee: {e}")
+        return jsonify({"error": str(e)}), 500

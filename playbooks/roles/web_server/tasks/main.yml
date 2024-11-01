@@ -43,19 +43,21 @@
     mode: '0755'
   tags: setup
 
-- name: Set up virtual environment
+- name: Set up virtual environment for the Flask application
   command: python3 -m venv /opt/gunicorn_app/venv
+  args:
+    creates: /opt/gunicorn_app/venv
   tags: venv
 
-- name: Install Flask, Gunicorn, and other dependencies in virtual environment
-  command: "/opt/gunicorn_app/venv/bin/pip install Flask gunicorn mysql-connector-python flask-mysqldb"
+- name: Install Flask, Gunicorn, and MySQL dependencies in virtual environment
+  command: "/opt/gunicorn_app/venv/bin/pip install Flask gunicorn mysql-connector-python"
   tags: dependencies
 
-- name: Set environment variables for Flask app
+- name: Set environment variables for Flask app using internal IP for the database
   copy:
     dest: /etc/environment
     content: |
-      MYSQL_DATABASE_HOST={{ db_server_ip }}
+      MYSQL_DATABASE_HOST={{ db_server_internal_ip }}
       MYSQL_DATABASE_USER={{ db_user }}
       MYSQL_DATABASE_PASSWORD={{ db_password }}
       MYSQL_DATABASE_DB={{ db_name }}
@@ -144,4 +146,3 @@
     name: nginx
     state: restarted
   tags: nginx
-
