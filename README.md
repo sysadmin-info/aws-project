@@ -72,14 +72,24 @@ Configure these rules in your AWS Management Console under the "Security Groups"
 
 ## Creating `vars/creds.yml`
 1. **Purpose**: The `vars/creds.yml` file contains sensitive AWS credentials required for deploying resources. It should include your AWS Access Key, Secret Key, and the AWS region.
-2. **Example Structure**:
+
+2. **Generating AWS Access Key and Secret Key**:
+   - **Step 1**: Log in to the [AWS Management Console](https://aws.amazon.com/console/).
+   - **Step 2**: Navigate to **IAM (Identity and Access Management)**.
+   - **Step 3**: In the left sidebar, click on **Users**, then select the user for whom you want to generate the keys. If you don’t have a user yet, create a new one with appropriate permissions.
+   - **Step 4**: Go to the **Security credentials** tab.
+   - **Step 5**: Click on **Create access key**. 
+   - **Step 6**: Copy the **Access Key ID** and **Secret Access Key**. Store them securely, as you won’t be able to view the Secret Access Key again.
+
+3. **Example Structure of `vars/creds.yml`**:
    ```yaml
    # vars/creds.yml
    aws_access_key: "YOUR_AWS_ACCESS_KEY"
    aws_secret_key: "YOUR_AWS_SECRET_KEY"
    aws_region: "YOUR_AWS_REGION"
    ```
-3. **Encrypting `vars/creds.yml`**:
+
+4. **Encrypting `vars/creds.yml`**:
    - Use Ansible Vault to encrypt this file for secure storage and usage.
    - Command to encrypt:
      ```bash
