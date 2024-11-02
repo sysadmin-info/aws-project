@@ -53,14 +53,31 @@ playbooks/roles/*/vars/main.yml
 - **Ansible**: Ensure you have Ansible installed on your control machine.
 - **AWS Credentials**: Set up AWS CLI and configure your AWS credentials.
 
+## Configuring AWS Security Group
+To ensure proper access to your servers and applications, update your AWS Security Group settings:
+
+1. **Allow SSH (Port 22)**: 
+   - Source: `0.0.0.0/0` (for internet access)
+   - Purpose: Enable remote SSH access to your instances from anywhere. Make sure to restrict this in a production environment for better security.
+
+2. **Allow HTTP (Port 80)**:
+   - Source: `0.0.0.0/0` (for internet access)
+   - Purpose: Allow public HTTP traffic to the web server.
+
+3. **Allow MySQL (Port 3306)**:
+   - Source: `172.16.0.0/12` (for internal network access only)
+   - Purpose: Restrict database access to the internal network for security. The `172.16.0.0/12` range covers private IP addresses used for internal communication.
+
+Configure these rules in your AWS Management Console under the "Security Groups" settings for your EC2 instances.
+
 ## Creating `vars/creds.yml`
 1. **Purpose**: The `vars/creds.yml` file contains sensitive AWS credentials required for deploying resources. It should include your AWS Access Key, Secret Key, and the AWS region.
 2. **Example Structure**:
    ```yaml
    # vars/creds.yml
-   aws_access_key: "YOUR_AWS_ACCESS_KEY"
-   aws_secret_key: "YOUR_AWS_SECRET_KEY"
-   aws_region: "YOUR_AWS_REGION"
+   aws_access_key: YOUR_AWS_ACCESS_KEY
+   aws_secret_key: YOUR_AWS_SECRET_KEY
+   aws_region: YOUR_AWS_REGION
    ```
 3. **Encrypting `vars/creds.yml`**:
    - Use Ansible Vault to encrypt this file for secure storage and usage.
@@ -78,14 +95,14 @@ playbooks/roles/*/vars/main.yml
      # db_server/vars/main.yml
      db_name: "employee_db"
      db_user: "db_user"
-     db_password: "password"
+     db_password: "Passw0rd"
      ```
    - **`web_server/vars/main.yml`**:
      ```yaml
      # web_server/vars/main.yml
      db_server_ip: "{{ hostvars['localhost']['db_server_ip'] }}"
      db_user: "db_user"
-     db_password: "password"
+     db_password: "Passw0rd"
      db_name: "employee_db"
      ```
 
@@ -93,13 +110,6 @@ playbooks/roles/*/vars/main.yml
    - `db_server_ip`: Refers to the IP address of the database server.
    - `db_user` and `db_password`: Credentials used to connect to the database.
    - `db_name`: The name of the database being accessed.
-
-## Database Variables in `vars/main.yml` in Roles
-- The `vars/main.yml` files inside the `db_server` and `web_server` roles contain database connection details such as:
-  - **Database Name**: Name of the database.
-  - **Username & Password**: Credentials for accessing the database.
-  - **Host & Port**: Details for connecting to the database server.
-- Customize these variables to suit your environment before running the playbooks.
 
 ## Usage
 1. Update the `inventory/hosts` file with your server details.
