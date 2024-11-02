@@ -70,6 +70,30 @@ playbooks/roles/*/vars/main.yml
      ```
    - You will be prompted to enter a password, which will be required when running Ansible playbooks.
 
+## Creating `vars/main.yml` in Roles
+1. **Purpose**: Each role requires a `vars/main.yml` file to define variables specific to the database configuration.
+2. **File Locations and Content**:
+   - **`db_server/vars/main.yml`**:
+     ```yaml
+     # db_server/vars/main.yml
+     db_name: "employee_db"
+     db_user: "db_user"
+     db_password: "password"
+     ```
+   - **`web_server/vars/main.yml`**:
+     ```yaml
+     # web_server/vars/main.yml
+     db_server_ip: "{{ hostvars['localhost']['db_server_ip'] }}"
+     db_user: "db_user"
+     db_password: "password"
+     db_name: "employee_db"
+     ```
+
+3. **Explanation**:
+   - `db_server_ip`: Refers to the IP address of the database server.
+   - `db_user` and `db_password`: Credentials used to connect to the database.
+   - `db_name`: The name of the database being accessed.
+
 ## Database Variables in `vars/main.yml` in Roles
 - The `vars/main.yml` files inside the `db_server` and `web_server` roles contain database connection details such as:
   - **Database Name**: Name of the database.
@@ -96,4 +120,3 @@ Feel free to open issues or submit pull requests if you want to contribute to th
 
 ## License
 This project is licensed under MIT LICENSE. See [LICENSE](https://github.com/sysadmin-info/aws-project/blob/main/LICENSE) for more details.
-
