@@ -95,4 +95,4 @@ playbooks/roles/*/vars/main.yml
 Feel free to open issues or submit pull requests if you want to contribute to this project. Follow the contribution guidelines and coding standards.
 
 ## License
-This project is licensed under [LICENSE_NAME]. See `LICENSE` for more details.
+This project is licensed under [MIT LICENSE]. See `[LICENSE](https://github.com/sysadmin-info/aws-project/blob/main/LICENSE)` for more details.
