@@ -75,9 +75,9 @@ Configure these rules in your AWS Management Console under the "Security Groups"
 2. **Example Structure**:
    ```yaml
    # vars/creds.yml
-   aws_access_key: YOUR_AWS_ACCESS_KEY
-   aws_secret_key: YOUR_AWS_SECRET_KEY
-   aws_region: YOUR_AWS_REGION
+   aws_access_key: "YOUR_AWS_ACCESS_KEY"
+   aws_secret_key: "YOUR_AWS_SECRET_KEY"
+   aws_region: "YOUR_AWS_REGION"
    ```
 3. **Encrypting `vars/creds.yml`**:
    - Use Ansible Vault to encrypt this file for secure storage and usage.
