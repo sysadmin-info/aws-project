@@ -19,15 +19,15 @@ aws-project/
 │       │   ├── tasks/
 │       │   │   └── main.yml     # Tasks for the db_server role
 │       │   └── vars/
-│       │       └── main.yml     # Variables for the db_server role
+│       │       └── main.yml     # Database variables for db_server role
 │       └── web_server/          # Role to configure the web server
 │           ├── handlers/
 │           │   └── main.yml     # Handlers for the web_server role
 │           ├── tasks/
 │           │   ├── app.py       # Application script for the web server
-│           │   └── main.yml     # Tasks for the web_server role
+│           │   └── main.yml     # Tasks for the web server role
 │           └── vars/
-│               └── main.yml     # Variables for the web server role
+│               └── main.yml     # Database variables for web_server role
 │
 ├── vars/
 │   └── creds.yml                # Encrypted credentials file using Ansible Vault
@@ -53,15 +53,29 @@ playbooks/roles/*/vars/main.yml
 - **Ansible**: Ensure you have Ansible installed on your control machine.
 - **AWS Credentials**: Set up AWS CLI and configure your AWS credentials.
 
-## Setup & Installation
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/sysadmin-info/aws-project.git
-   cd aws-project
+## Creating `vars/creds.yml`
+1. **Purpose**: The `vars/creds.yml` file contains sensitive AWS credentials required for deploying resources. It should include your AWS Access Key, Secret Key, and the AWS region.
+2. **Example Structure**:
+   ```yaml
+   # vars/creds.yml
+   aws_access_key: YOUR_AWS_ACCESS_KEY
+   aws_secret_key: YOUR_AWS_SECRET_KEY
+   aws_region: YOUR_AWS_REGION
    ```
-2. Install dependencies:
-   - Make sure Ansible is installed on your system.
-   - Configure AWS CLI with your credentials.
+3. **Encrypting `vars/creds.yml`**:
+   - Use Ansible Vault to encrypt this file for secure storage and usage.
+   - Command to encrypt:
+     ```bash
+     ansible-vault encrypt vars/creds.yml
+     ```
+   - You will be prompted to enter a password, which will be required when running Ansible playbooks.
+
+## Database Variables in `vars/main.yml` in Roles
+- The `vars/main.yml` files inside the `db_server` and `web_server` roles contain database connection details such as:
+  - **Database Name**: Name of the database.
+  - **Username & Password**: Credentials for accessing the database.
+  - **Host & Port**: Details for connecting to the database server.
+- Customize these variables to suit your environment before running the playbooks.
 
 ## Usage
 1. Update the `inventory/hosts` file with your server details.
